@@ -5,6 +5,27 @@
  * board fills (tie)
  */
 
+class Game {
+  constructor(...args) {
+    board = [];
+    
+    // default height and width handling
+    if (args[0] === null) {
+      width = 7;
+    } else {
+      width = args[0];
+    }
+
+    if (args[1] === null) {
+      height = 8;
+    } else {
+      width = args[1];
+    }
+  }
+
+
+}
+
 const WIDTH = 7;
 const HEIGHT = 6;
 
