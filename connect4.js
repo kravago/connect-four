@@ -5,23 +5,30 @@
  * board fills (tie)
  */
 
+class Player {
+  constructor(color) {
+    this.color = color;
+  }
+}
+
 class Game {
-  constructor(...args) {
+  constructor(p1, p2, height, width) {
     this.board = [];
-    this.currPlayer = 1;
-    this.gameStarted = false;
+    this.players = [p1, p2];
+    this.currPlayer = p1;
+    this.gameStarted = true;
 
     // default height and width handling
-    if (args[0] === null) {
+    if (height === null) {
       this.height = 6;
     } else {
-      this.height = args[0];
+      this.height = height;
     }
 
-    if (args[1] === null) {
+    if (width === null) {
       this.width = 7;
     } else {
-      this.width = args[1];
+      this.width = width;
     }
 
     // construct board
@@ -30,6 +37,7 @@ class Game {
   }
   
   makeBoard() {
+    this.board = []
     for (let y = 0; y < this.height; y++) {
       this.board.push(Array.from({ length: this.width }));
     }
@@ -41,14 +49,7 @@ class Game {
   }  
 
   handleReset(evt) {
-    this.board = [];
     this.makeBoard();
-    
-    // delete all rows in table and build them back
-    const rows = document.querySelectorAll('tr');
-    for (let row of rows) {
-      row.remove();
-    }
     this.makeHtmlBoard();
   }
 
@@ -56,10 +57,11 @@ class Game {
     // make buttons
     const start = document.querySelector('#start')
     const reset = document.querySelector('#reset')
-    start.addEventListener("click", this.handleGameStart.bind(this));
+    // start.addEventListener("click", this.handleGameStart.bind(this));
     reset.addEventListener("click", this.handleReset.bind(this));
 
     const board = document.getElementById('board');
+    board.innerHTML = '';
   
     // make column tops (clickable area for adding a piece to that column)
     const top = document.createElement('tr');
@@ -100,7 +102,7 @@ class Game {
   placeInTable(y, x) {
     const piece = document.createElement('div');
     piece.classList.add('piece');
-    piece.classList.add(`p${this.currPlayer}`);
+    piece.style.backgroundColor = this.currPlayer.color;
     piece.style.top = -50 * (y + 2);
   
     const spot = document.getElementById(`${y}-${x}`);
@@ -109,6 +111,7 @@ class Game {
 
   endGame(msg) {
     alert(msg);
+    this.gameStarted = false;
   }
 
   handleClick(evt) {
@@ -129,7 +132,7 @@ class Game {
     
     // check for win
     if (this.checkForWin()) {
-      return this.endGame(`Player ${this.currPlayer} won!`);
+      return this.endGame(`${this.currPlayer.color} Player won!`);
     }
     
     // check for tie
@@ -138,7 +141,7 @@ class Game {
     }
       
     // switch players
-    this.currPlayer = this.currPlayer === 1 ? 2 : 1;
+    this.currPlayer = this.currPlayer === this.players[0] ? this.players[1] : this.players[0];
   }
   
   checkForWin() {
@@ -179,16 +182,11 @@ class Game {
 
 }
 
-
-
-
-/** checkForWin: check board cell-by-cell for "does a win start here?" */
-
-// makeBoard();
-// makeHtmlBoard();
-
-const g = new Game(6, 7);
-
-// // setup board
-// g.makeBoard();
-// g.makeHtmlBoard();
+let start = document.querySelector('#start');
+start.addEventListener('click', () => {
+  let colorP1 = document.querySelector('#player1');
+  let colorP2 = document.querySelector('#player2');
+  let p1 = new Player(colorP1.value);
+  let p2 = new Player(colorP2.value);
+  new Game(p1, p2, 6, 7);
+})
