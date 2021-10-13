@@ -9,6 +9,7 @@ class Game {
   constructor(...args) {
     this.board = [];
     this.currPlayer = 1;
+    this.gameStarted = false;
 
     // default height and width handling
     if (args[0] === null) {
@@ -22,6 +23,10 @@ class Game {
     } else {
       this.width = args[1];
     }
+
+    // construct board
+    this.makeBoard();
+    this.makeHtmlBoard();
   }
   
   makeBoard() {
@@ -30,7 +35,30 @@ class Game {
     }
   }
 
+  handleGameStart(evt) {
+    this.gameStarted = true;
+    alert("Game has started!");
+  }  
+
+  handleReset(evt) {
+    this.board = [];
+    this.makeBoard();
+    
+    // delete all rows in table and build them back
+    const rows = document.querySelectorAll('tr');
+    for (let row of rows) {
+      row.remove();
+    }
+    this.makeHtmlBoard();
+  }
+
   makeHtmlBoard() {
+    // make buttons
+    const start = document.querySelector('#start')
+    const reset = document.querySelector('#reset')
+    start.addEventListener("click", this.handleGameStart.bind(this));
+    reset.addEventListener("click", this.handleReset.bind(this));
+
     const board = document.getElementById('board');
   
     // make column tops (clickable area for adding a piece to that column)
@@ -84,9 +112,12 @@ class Game {
   }
 
   handleClick(evt) {
+    // if game hasnt started, ignore clicks
+    if (this.gameStarted === false) return;
+    
     // get x from ID of clicked cell
     const x = +evt.target.id;
-  
+    
     const y = this.findSpotForCol(x);
     if (y === null) {
       return;
@@ -158,6 +189,6 @@ class Game {
 
 const g = new Game(6, 7);
 
-// setup board
-g.makeBoard();
-g.makeHtmlBoard();
+// // setup board
+// g.makeBoard();
+// g.makeHtmlBoard();
