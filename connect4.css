@@ -32,3 +32,8 @@
 #column-top td:hover {
   background-color: gold;
 }
+
+.container {
+  display: flex;
+  justify-content: center;
+}
